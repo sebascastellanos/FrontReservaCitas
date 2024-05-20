@@ -1,23 +1,72 @@
-import logo from './logo.svg';
-import './App.css';
+// App.js
+
+import "./App.css";
+import { Link, Route, Routes } from "react-router-dom";
+
+import HomePage from "./pages/HomePage";
+
+import React from "react";
+import ClientePage from "./pages/ClientePage";
+import EstilistaPage from "./pages/EstilistaPage";
+import ServiciosPage from "./pages/ServicioPage";
+import CitaPage from "./pages/CitaPage";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      <div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-evenly",
+            background: "#282c34",
+            fontSize: "20px",
+          }}
         >
-          Learn React
-        </a>
-      </header>
+          <Link to={"/"} style={{ color: "white" }}>
+            Home
+          </Link>
+          <Link
+            to={"/cliente"}
+            style={{
+              color: "white",
+            }}
+          >
+            Cliente
+          </Link>
+          <Link
+            to={"/estilista"}
+            style={{
+              color: "white",
+            }}
+          >
+            Estilista
+          </Link>
+          <Link
+            to={"/servicio"}
+            style={{
+              color: "white",
+            }}
+          >
+            Servicio
+          </Link>
+          <Link
+            to={"/cita"}
+            style={{
+              color: "white",
+            }}
+          >
+            Cita
+          </Link>
+        </div>
+      </div>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/cliente" element={<ClientePage />} />
+        <Route path="/estilista" element={<EstilistaPage />} />
+        <Route path="/servicio" element={<ServiciosPage />} />
+        <Route path="/cita" element={<CitaPage />} />
+      </Routes>
     </div>
   );
 }
