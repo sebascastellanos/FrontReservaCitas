@@ -1,33 +1,59 @@
-import React, { useState } from "react";
-import { createCita } from "../api/api";
+import React, { useState, useEffect } from "react";
+import {
+  createCita,
+  getClientes,
+  getEstilistas,
+  getServicios,
+} from "../api/api";
 
 function CitaPage() {
   const [idCita, setIdCita] = useState("");
-  const [idCliente, setIdCliente] = useState("");
-  const [idEstilista, setIdEstilista] = useState("");
-  const [idServicio, setIdServicio] = useState("");
+  const [selectedCliente, setSelectedCliente] = useState("");
+  const [selectedEstilista, setSelectedEstilista] = useState("");
+  const [selectedServicio, setSelectedServicio] = useState("");
   const [fechaHora, setFechaHora] = useState("");
   const [estado, setEstado] = useState("Pendiente");
+  const [clientes, setClientes] = useState([]);
+  const [estilistas, setEstilistas] = useState([]);
+  const [servicios, setServicios] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const clientesData = await getClientes();
+      setClientes(clientesData);
+
+      const estilistasData = await getEstilistas();
+      setEstilistas(estilistasData);
+
+      const serviciosData = await getServicios();
+      setServicios(serviciosData);
+    };
+    fetchData();
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     try {
       const citaData = {
         idCita: parseInt(idCita),
-        cliente: {
-          idCliente: parseInt(idCliente),
+        cliente: 
+        {
+            idCliente:   selectedCliente.idCliente,
         },
-        estilista: {
-          idEstilista: parseInt(idEstilista),
+        estilista: 
+        {
+           idEstilista: selectedEstilista.idEstilista,
         },
-        servicio: {
-          idServicio: parseInt(idServicio),
+
+        servicio: 
+        {
+           idServicio: selectedServicio.idServicio,
         },
         fechaHora,
         estado,
       };
 
+      console.log("Solicitud enviada al backend:", citaData);
       const response = await createCita(citaData);
       console.log("Respuesta del backend:", response);
       alert("Cita creada con éxito");
@@ -97,31 +123,65 @@ function CitaPage() {
         </label>
         <label style={labelStyle}>
           Cliente:
-          <input
-            type="text"
-            value={idCliente}
-            onChange={(e) => setIdCliente(e.target.value)}
+          <select
+            value={selectedCliente ? selectedCliente.nombre : ""}
+            onChange={(e) => {
+              const selectedClienteObj = clientes.find(
+                (cliente) => cliente.nombre === e.target.value
+              );
+              setSelectedCliente(selectedClienteObj || "");
+            }}
             style={inputStyle}
-          />
+          >
+            <option value="">Selecciona un cliente</option>
+            {clientes.map((cliente) => (
+              <option key={cliente.idCliente} value={cliente.nombre}>
+                {cliente.nombre}
+              </option>
+            ))}
+          </select>
         </label>
         <label style={labelStyle}>
           Estilista:
-          <input
-            type="text"
-            value={idEstilista}
-            onChange={(e) => setIdEstilista(e.target.value)}
+          <select
+            value={selectedEstilista ? selectedEstilista.nombre : ""}
+            onChange={(e) => {
+              const selectedEstilistaObj = estilistas.find(
+                (estilista) => estilista.nombre === e.target.value
+              );
+              setSelectedEstilista(selectedEstilistaObj || "");
+            }}
             style={inputStyle}
-          />
+          >
+            <option value="">Selecciona un estilista</option>
+            {estilistas.map((estilista) => (
+              <option key={estilista.idEstilista} value={estilista.nombre}>
+                {estilista.nombre}
+              </option>
+            ))}
+          </select>
         </label>
         <label style={labelStyle}>
           Servicio:
-          <input
-            type="text"
-            value={idServicio}
-            onChange={(e) => setIdServicio(e.target.value)}
+          <select
+            value={selectedServicio ? selectedServicio.nombre : ""}
+            onChange={(e) => {
+              const selectedServicioObj = servicios.find(
+                (servicio) => servicio.nombre === e.target.value
+              );
+              setSelectedServicio(selectedServicioObj || "");
+            }}
             style={inputStyle}
-          />
+          >
+            <option value="">Selecciona un servicio</option>
+            {servicios.map((servicio) => (
+              <option key={servicio.idServicio} value={servicio.nombre}>
+                {servicio.nombre}
+              </option>
+            ))}
+          </select>
         </label>
+
         <label style={labelStyle}>
           Fecha y Hora:
           <input
