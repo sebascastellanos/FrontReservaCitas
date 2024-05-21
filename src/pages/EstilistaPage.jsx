@@ -26,10 +26,9 @@ function EstilistaPage() {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
-        backgroundColor: '#f0f8ff',
+        background: 'linear-gradient(135deg, #ff6ec4, #7873f5)',
         fontFamily: "'Comic Sans MS', 'Comic Sans', cursive",
     };
-
     const formStyle = {
         display: 'flex',
         flexDirection: 'column',

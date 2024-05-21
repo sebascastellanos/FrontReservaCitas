@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  createCita,
-  getClientes,
-  getEstilistas,
-  getServicios,
-} from "../api/api";
+import { createCita, getClientes, getEstilistas, getServicios, getCitas, deleteCita } from "../api/api";
 
 function CitaPage() {
   const [idCita, setIdCita] = useState("");
@@ -16,6 +11,7 @@ function CitaPage() {
   const [clientes, setClientes] = useState([]);
   const [estilistas, setEstilistas] = useState([]);
   const [servicios, setServicios] = useState([]);
+  const [citas, setCitas] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,28 +23,29 @@ function CitaPage() {
 
       const serviciosData = await getServicios();
       setServicios(serviciosData);
+
+      const citasData = await getCitas();
+      setCitas(citasData);
     };
     fetchData();
   }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    const citaDate = new Date(fechaHora);
+    const hours = citaDate.getHours();
+
+    if (hours < 9 || hours > 19) {
+      alert("No se puede agendar una cita fuera del horario de 9:00 AM a 7:00 PM.");
+      return;
+    }
+
     try {
       const citaData = {
         idCita: parseInt(idCita),
-        cliente: 
-        {
-            idCliente:   selectedCliente.idCliente,
-        },
-        estilista: 
-        {
-           idEstilista: selectedEstilista.idEstilista,
-        },
-
-        servicio: 
-        {
-           idServicio: selectedServicio.idServicio,
-        },
+        cliente: { idCliente: selectedCliente.idCliente },
+        estilista: { idEstilista: selectedEstilista.idEstilista },
+        servicio: { idServicio: selectedServicio.idServicio },
         fechaHora,
         estado,
       };
@@ -57,22 +54,39 @@ function CitaPage() {
       const response = await createCita(citaData);
       console.log("Respuesta del backend:", response);
       alert("Cita creada con éxito");
+
+      // Actualizar la lista de citas después de crear una nueva cita
+      const updatedCitas = await getCitas();
+      setCitas(updatedCitas);
     } catch (error) {
       console.error("Error al crear la cita:", error);
       alert("Hubo un error al crear la cita");
     }
   };
 
-  const containerStyle = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100vh",
-    backgroundColor: "#f0f8ff",
-    fontFamily: "'Comic Sans MS', 'Comic Sans', cursive",
+  const handleDelete = async (idCita) => {
+    try {
+      await deleteCita(idCita);
+      alert("Cita eliminada con éxito");
+      
+      // Actualizar la lista de citas después de eliminar una cita
+      const updatedCitas = await getCitas();
+      setCitas(updatedCitas);
+    } catch (error) {
+      console.error("Error al eliminar la cita:", error);
+      alert("Hubo un error al eliminar la cita");
+    }
   };
 
+  const containerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    background: 'linear-gradient(135deg, #681692, #3F9216)',
+    fontFamily: "'Comic Sans MS', 'Comic Sans', cursive",
+};
   const formStyle = {
     display: "flex",
     flexDirection: "column",
@@ -80,6 +94,7 @@ function CitaPage() {
     padding: "20px",
     borderRadius: "10px",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+    marginBottom: "20px",
   };
 
   const labelStyle = {
@@ -108,93 +123,140 @@ function CitaPage() {
     backgroundColor: "#87ceeb",
   };
 
+  const citaStyle = {
+    backgroundColor: "#ffe4e1",
+    padding: "10px",
+    borderRadius: "15px",
+    margin: "10px 0",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  };
+
+  const cancelButtonStyle = {
+    backgroundColor: "#ff6347",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    padding: "5px 10px",
+    cursor: "pointer",
+    marginTop: "10px",
+  };
+
+  const contentWrapperStyle = {
+    overflowY: "auto", // Permite el scroll vertical
+    maxHeight: "90vh", // Asegura que el contenido no se extienda más allá de la pantalla
+    width: "100%",
+    padding: "20px",
+  };
+
   return (
     <div style={containerStyle}>
-      <h2>Reserva tu cita</h2>
-      <form onSubmit={handleSubmit} style={formStyle}>
-        <label style={labelStyle}>
-          ID Cita:
-          <input
-            type="text"
-            value={idCita}
-            onChange={(e) => setIdCita(e.target.value)}
-            style={inputStyle}
-          />
-        </label>
-        <label style={labelStyle}>
-          Cliente:
-          <select
-            value={selectedCliente ? selectedCliente.nombre : ""}
-            onChange={(e) => {
-              const selectedClienteObj = clientes.find(
-                (cliente) => cliente.nombre === e.target.value
-              );
-              setSelectedCliente(selectedClienteObj || "");
-            }}
-            style={inputStyle}
-          >
-            <option value="">Selecciona un cliente</option>
-            {clientes.map((cliente) => (
-              <option key={cliente.idCliente} value={cliente.nombre}>
-                {cliente.nombre}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label style={labelStyle}>
-          Estilista:
-          <select
-            value={selectedEstilista ? selectedEstilista.nombre : ""}
-            onChange={(e) => {
-              const selectedEstilistaObj = estilistas.find(
-                (estilista) => estilista.nombre === e.target.value
-              );
-              setSelectedEstilista(selectedEstilistaObj || "");
-            }}
-            style={inputStyle}
-          >
-            <option value="">Selecciona un estilista</option>
-            {estilistas.map((estilista) => (
-              <option key={estilista.idEstilista} value={estilista.nombre}>
-                {estilista.nombre}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label style={labelStyle}>
-          Servicio:
-          <select
-            value={selectedServicio ? selectedServicio.nombre : ""}
-            onChange={(e) => {
-              const selectedServicioObj = servicios.find(
-                (servicio) => servicio.nombre === e.target.value
-              );
-              setSelectedServicio(selectedServicioObj || "");
-            }}
-            style={inputStyle}
-          >
-            <option value="">Selecciona un servicio</option>
-            {servicios.map((servicio) => (
-              <option key={servicio.idServicio} value={servicio.nombre}>
-                {servicio.nombre}
-              </option>
-            ))}
-          </select>
-        </label>
+      <div style={contentWrapperStyle}>
+        <h2>Reserva tu cita</h2>
+        <form onSubmit={handleSubmit} style={formStyle}>
+          <label style={labelStyle}>
+            ID Cita:
+            <input
+              type="text"
+              value={idCita}
+              onChange={(e) => setIdCita(e.target.value)}
+              style={inputStyle}
+            />
+          </label>
+          <label style={labelStyle}>
+            Cliente:
+            <select
+              value={selectedCliente ? selectedCliente.nombre : ""}
+              onChange={(e) => {
+                const selectedClienteObj = clientes.find(
+                  (cliente) => cliente.nombre === e.target.value
+                );
+                setSelectedCliente(selectedClienteObj || "");
+              }}
+              style={inputStyle}
+            >
+              <option value="">Selecciona un cliente</option>
+              {clientes.map((cliente) => (
+                <option key={cliente.idCliente} value={cliente.nombre}>
+                  {cliente.nombre}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label style={labelStyle}>
+            Estilista:
+            <select
+              value={selectedEstilista ? selectedEstilista.nombre : ""}
+              onChange={(e) => {
+                const selectedEstilistaObj = estilistas.find(
+                  (estilista) => estilista.nombre === e.target.value
+                );
+                setSelectedEstilista(selectedEstilistaObj || "");
+              }}
+              style={inputStyle}
+            >
+              <option value="">Selecciona un estilista</option>
+              {estilistas.map((estilista) => (
+                <option key={estilista.idEstilista} value={estilista.nombre}>
+                  {estilista.nombre}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label style={labelStyle}>
+            Servicio:
+            <select
+              value={selectedServicio ? selectedServicio.nombre : ""}
+              onChange={(e) => {
+                const selectedServicioObj = servicios.find(
+                  (servicio) => servicio.nombre === e.target.value
+                );
+                setSelectedServicio(selectedServicioObj || "");
+              }}
+              style={inputStyle}
+            >
+              <option value="">Selecciona un servicio</option>
+              {servicios.map((servicio) => (
+                <option key={servicio.idServicio} value={servicio.nombre}>
+                  {servicio.nombre}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <label style={labelStyle}>
-          Fecha y Hora:
-          <input
-            type="datetime-local"
-            value={fechaHora}
-            onChange={(e) => setFechaHora(e.target.value)}
-            style={inputStyle}
-          />
-        </label>
-        <button type="submit" style={{ ...buttonStyle, ...buttonHoverStyle }}>
-          Reservar
-        </button>
-      </form>
+          <label style={labelStyle}>
+            Fecha y Hora:
+            <input
+              type="datetime-local"
+              value={fechaHora}
+              onChange={(e) => setFechaHora(e.target.value)}
+              style={inputStyle}
+            />
+          </label>
+          <button type="submit" style={{ ...buttonStyle, ...buttonHoverStyle }}>
+            Reservar
+          </button>
+        </form>
+
+        <h2>Citas guardadas</h2>
+        <div>
+          {citas.map((cita) => (
+            <div key={cita.idCita} style={citaStyle}>
+              <p><strong>ID Cita:</strong> {cita.idCita}</p>
+              <p><strong>Cliente:</strong> {cita.cliente.nombre}</p>
+              <p><strong>Estilista:</strong> {cita.estilista.nombre}</p>
+              <p><strong>Servicio:</strong> {cita.servicio.nombre}</p>
+              <p><strong>Fecha y Hora:</strong> {cita.fechaHora}</p>
+              <p><strong>Estado:</strong> {cita.estado}</p>
+              <button 
+                style={cancelButtonStyle} 
+                onClick={() => handleDelete(cita.idCita)}
+              >
+                Cancelar
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

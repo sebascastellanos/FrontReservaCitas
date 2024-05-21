@@ -10,6 +10,7 @@ import ClientePage from "./pages/ClientePage";
 import EstilistaPage from "./pages/EstilistaPage";
 import ServiciosPage from "./pages/ServicioPage";
 import CitaPage from "./pages/CitaPage";
+import DispoPage from "./pages/DispoPage";
 
 function App() {
   return (
@@ -58,6 +59,14 @@ function App() {
           >
             Cita
           </Link>
+          <Link
+            to={"/dispo"}
+            style={{
+              color: "white",
+            }}
+          >
+            Dispo
+          </Link>
         </div>
       </div>
       <Routes>
@@ -66,6 +75,7 @@ function App() {
         <Route path="/estilista" element={<EstilistaPage />} />
         <Route path="/servicio" element={<ServiciosPage />} />
         <Route path="/cita" element={<CitaPage />} />
+        <Route path="/dispo" element={<DispoPage />} />
       </Routes>
     </div>
   );
