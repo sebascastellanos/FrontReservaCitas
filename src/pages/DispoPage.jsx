@@ -64,18 +64,18 @@ export default function DispoPage() {
 }
 
 const containerStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '100vh',
-  backgroundColor: '#f0f8ff',
-  fontFamily: 'Arial, sans-serif',
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  height: "100vh",
+  background: "linear-gradient(150deg, #0B4766, #870A0A)",
+  fontFamily: "'Comic Sans MS', 'Comic Sans', cursive",
 };
-
 const titleStyle = {
   marginBottom: '20px',
   fontSize: '24px',
+  color: "white"
 };
 
 const formContainerStyle = {
@@ -88,6 +88,7 @@ const formContainerStyle = {
 const labelStyle = {
   marginBottom: '10px',
   fontSize: '16px',
+  color: "white"
 };
 
 const inputStyle = {
@@ -100,8 +101,8 @@ const buttonStyle = {
   padding: '10px 20px',
   border: 'none',
   borderRadius: '5px',
-  backgroundColor: '#add8e6',
-  color: '#fff',
+  backgroundColor: '#6C389C',
+  color: 'black',
   fontSize: '16px',
   cursor: 'pointer',
 };

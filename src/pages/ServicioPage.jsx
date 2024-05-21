@@ -33,7 +33,7 @@ function ServiciosPage() {
     alignItems: 'center',
     justifyContent: 'center',
     height: '100vh',
-    background: 'linear-gradient(135deg, #B2742D, #B41404)',
+    background: 'linear-gradient(135deg, #B25AC5, #ECE23E)',
     fontFamily: "'Comic Sans MS', 'Comic Sans', cursive",
 };
   const formStyle = {
