@@ -14,7 +14,7 @@ function CitaPage() {
   const [selectedEstilista, setSelectedEstilista] = useState("");
   const [selectedServicio, setSelectedServicio] = useState("");
   const [fechaHora, setFechaHora] = useState("");
-  const [estado, setEstado] = useState("Pendiente");
+  const [estado, setEstado] = useState("Reservado");
   const [clientes, setClientes] = useState([]);
   const [estilistas, setEstilistas] = useState([]);
   const [servicios, setServicios] = useState([]);
@@ -114,7 +114,7 @@ function CitaPage() {
     alignItems: "center",
     justifyContent: "center",
     height: "100vh",
-    background: "linear-gradient(135deg, #681692, #3F9216)",
+    background: "linear-gradient(135deg, #82E30E, #19F1CD)",
     fontFamily: "'Comic Sans MS', 'Comic Sans', cursive",
   };
   const formStyle = {
