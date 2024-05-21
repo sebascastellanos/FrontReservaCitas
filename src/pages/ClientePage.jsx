@@ -6,6 +6,7 @@ function ClientePage() {
     const [nombre, setNombre] = useState('');
     const [telefono, setTelefono] = useState('');
     const [correoElectronico, setCorreoElectronico] = useState('');
+    const [buttonClicked, setButtonClicked] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -20,7 +21,12 @@ function ClientePage() {
         }
     };
     
-    
+    const handleButtonClick = () => {
+        setButtonClicked(true);
+        setTimeout(() => {
+            setButtonClicked(false);
+        }, 300); // Cambia este valor según la duración deseada de la animación
+    };
 
     const containerStyle = {
         display: 'flex',
@@ -31,7 +37,6 @@ function ClientePage() {
         background: 'linear-gradient(135deg, #00f5a0, #009688)',
         fontFamily: "'Comic Sans MS', 'Comic Sans', cursive",
     };
-    
 
     const formStyle = {
         display: 'flex',
@@ -62,6 +67,8 @@ function ClientePage() {
         backgroundColor: '#add8e6',
         fontSize: '18px',
         cursor: 'pointer',
+        transform: buttonClicked ? 'scale(0.95)' : 'scale(1)', // Aplica la transformación si el botón fue presionado
+        transition: 'transform 0.3s', // Agrega una transición suave a la transformación
     };
 
     const buttonHoverStyle = {
@@ -111,6 +118,7 @@ function ClientePage() {
                 <button
                     type="submit"
                     style={{ ...buttonStyle, ...buttonHoverStyle }}
+                    onClick={handleButtonClick} // Agrega el manejador de evento onClick para la animación
                 >
                     Reservar
                 </button>
