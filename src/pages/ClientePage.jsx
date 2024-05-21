@@ -28,9 +28,10 @@ function ClientePage() {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
-        backgroundColor: '#f0f8ff',
+        background: 'linear-gradient(135deg, #00f5a0, #009688)',
         fontFamily: "'Comic Sans MS', 'Comic Sans', cursive",
     };
+    
 
     const formStyle = {
         display: 'flex',

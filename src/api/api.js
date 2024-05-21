@@ -137,4 +137,36 @@ export const getClientes = async () => {
     }
   };
 
-  
+  export async function getCitas() {
+    try {
+      const response = await fetch(`http://localhost:8080/citas`);
+      if (!response.ok) {
+        throw new Error("Error al obtener las citas");
+      }
+      const citas = await response.json();
+      return citas;
+    } catch (error) {
+      console.error("Error en getCitas:", error);
+      throw error;
+    }
+  }
+  export const deleteCita = async (idCita) => {
+    try {
+      const response = await fetch(`http://localhost:8080/citas/eliminar/${idCita}`, {
+        method: "DELETE",
+    });
+
+    // Verificar si la respuesta tiene contenido
+    if (response.status === 204) {
+      // No hay contenido en la respuesta (204 No Content)
+      return { success: true };
+    } else {
+      // Analizar la respuesta como JSON
+      const data = await response.json();
+      return data;
+    }
+  } catch (error) {
+    console.error("Error al eliminar la cita:", error);
+    throw error;
+  }
+  };

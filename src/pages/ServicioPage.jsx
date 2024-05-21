@@ -28,15 +28,14 @@ function ServiciosPage() {
   };
 
   const containerStyle = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100vh",
-    backgroundColor: "#f0f8ff",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100vh',
+    background: 'linear-gradient(135deg, #B2742D, #B41404)',
     fontFamily: "'Comic Sans MS', 'Comic Sans', cursive",
-  };
-
+};
   const formStyle = {
     display: "flex",
     flexDirection: "column",
