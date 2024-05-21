@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { createCita, getClientes, getEstilistas, getServicios, getCitas, deleteCita } from "../api/api";
+import {
+  createCita,
+  getClientes,
+  getEstilistas,
+  getServicios,
+  getCitas,
+  deleteCita,
+} from "../api/api";
 
 function CitaPage() {
   const [idCita, setIdCita] = useState("");
@@ -12,6 +19,7 @@ function CitaPage() {
   const [estilistas, setEstilistas] = useState([]);
   const [servicios, setServicios] = useState([]);
   const [citas, setCitas] = useState([]);
+  const [editingMode, setEditingMode] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,13 +38,35 @@ function CitaPage() {
     fetchData();
   }, []);
 
+  const handleUpdate = (cita) => {
+    setIdCita(cita.idCita);
+    setSelectedCliente(
+      clientes.find((cliente) => cliente.idCliente === cita.cliente.idCliente)
+    );
+    setSelectedEstilista(
+      estilistas.find(
+        (estilista) => estilista.idEstilista === cita.estilista.idEstilista
+      )
+    );
+    setSelectedServicio(
+      servicios.find(
+        (servicio) => servicio.idServicio === cita.servicio.idServicio
+      )
+    );
+    setFechaHora(cita.fechaHora);
+    setEstado(cita.estado);
+    setEditingMode(true);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     const citaDate = new Date(fechaHora);
     const hours = citaDate.getHours();
 
     if (hours < 9 || hours > 19) {
-      alert("No se puede agendar una cita fuera del horario de 9:00 AM a 7:00 PM.");
+      alert(
+        "No se puede agendar una cita fuera del horario de 9:00 AM a 7:00 PM."
+      );
       return;
     }
 
@@ -68,7 +98,7 @@ function CitaPage() {
     try {
       await deleteCita(idCita);
       alert("Cita eliminada con éxito");
-      
+
       // Actualizar la lista de citas después de eliminar una cita
       const updatedCitas = await getCitas();
       setCitas(updatedCitas);
@@ -79,14 +109,14 @@ function CitaPage() {
   };
 
   const containerStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100vh',
-    background: 'linear-gradient(135deg, #681692, #3F9216)',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100vh",
+    background: "linear-gradient(135deg, #681692, #3F9216)",
     fontFamily: "'Comic Sans MS', 'Comic Sans', cursive",
-};
+  };
   const formStyle = {
     display: "flex",
     flexDirection: "column",
@@ -141,6 +171,16 @@ function CitaPage() {
     marginTop: "10px",
   };
 
+  const updateBottonStyle = {
+    backgroundColor: "#3097CB",
+    color: "#fff",
+    border: "none",
+    borderRadius: "5px",
+    padding: "5px 10px",
+    cursor: "pointer",
+    marginTop: "10px",
+  };
+
   const contentWrapperStyle = {
     overflowY: "auto", // Permite el scroll vertical
     maxHeight: "90vh", // Asegura que el contenido no se extienda más allá de la pantalla
@@ -160,6 +200,7 @@ function CitaPage() {
               value={idCita}
               onChange={(e) => setIdCita(e.target.value)}
               style={inputStyle}
+              disabled={editingMode} 
             />
           </label>
           <label style={labelStyle}>
@@ -173,6 +214,7 @@ function CitaPage() {
                 setSelectedCliente(selectedClienteObj || "");
               }}
               style={inputStyle}
+              disabled={editingMode} 
             >
               <option value="">Selecciona un cliente</option>
               {clientes.map((cliente) => (
@@ -193,6 +235,7 @@ function CitaPage() {
                 setSelectedEstilista(selectedEstilistaObj || "");
               }}
               style={inputStyle}
+              disabled={editingMode} 
             >
               <option value="">Selecciona un estilista</option>
               {estilistas.map((estilista) => (
@@ -213,6 +256,7 @@ function CitaPage() {
                 setSelectedServicio(selectedServicioObj || "");
               }}
               style={inputStyle}
+              disabled={editingMode} 
             >
               <option value="">Selecciona un servicio</option>
               {servicios.map((servicio) => (
@@ -232,26 +276,48 @@ function CitaPage() {
               style={inputStyle}
             />
           </label>
-          <button type="submit" style={{ ...buttonStyle, ...buttonHoverStyle }}>
-            Reservar
-          </button>
+          <button
+          type="submit"
+          style={{ ...buttonStyle, ...buttonHoverStyle }}
+        >
+          {editingMode ? "Actualizar" : "Reservar"}
+        </button>
         </form>
 
         <h2>Citas guardadas</h2>
         <div>
           {citas.map((cita) => (
             <div key={cita.idCita} style={citaStyle}>
-              <p><strong>ID Cita:</strong> {cita.idCita}</p>
-              <p><strong>Cliente:</strong> {cita.cliente.nombre}</p>
-              <p><strong>Estilista:</strong> {cita.estilista.nombre}</p>
-              <p><strong>Servicio:</strong> {cita.servicio.nombre}</p>
-              <p><strong>Fecha y Hora:</strong> {cita.fechaHora}</p>
-              <p><strong>Estado:</strong> {cita.estado}</p>
-              <button 
-                style={cancelButtonStyle} 
+              <p>
+                <strong>ID Cita:</strong> {cita.idCita}
+              </p>
+              <p>
+                <strong>Cliente:</strong> {cita.cliente.nombre}
+              </p>
+              <p>
+                <strong>Estilista:</strong> {cita.estilista.nombre}
+              </p>
+              <p>
+                <strong>Servicio:</strong> {cita.servicio.nombre}
+              </p>
+              <p>
+                <strong>Fecha y Hora:</strong> {cita.fechaHora}
+              </p>
+              <p>
+                <strong>Estado:</strong> {cita.estado}
+              </p>
+
+              <button
+                style={{ ...cancelButtonStyle, marginRight: "10px" }}
                 onClick={() => handleDelete(cita.idCita)}
               >
                 Cancelar
+              </button>
+              <button
+                style={updateBottonStyle}
+                onClick={() => handleUpdate(cita)}
+              >
+                Reprogramar
               </button>
             </div>
           ))}
